@@ -5,6 +5,11 @@ const roomSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    branch: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Branch',
+        required: true,
+    },
     zone: {
         type: String,
         enum: ['HOTEL_INDOOR', 'KENNEL_OUTDOOR'],

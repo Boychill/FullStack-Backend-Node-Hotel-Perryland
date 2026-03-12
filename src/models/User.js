@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
         enum: ['ADMIN', 'RECEPTION', 'CLIENT', 'VET', 'TRAINER', 'MONITOR', 'DRIVER'],
         default: 'CLIENT',
     },
+    branch: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Branch',
+    },
     phone: String,
     status: {
         type: String,
@@ -29,8 +33,20 @@ const userSchema = new mongoose.Schema({
     addresses: [{
         label: String,
         address_line: String,
-        is_default: Boolean,
+        geo: { lat: Number, lng: Number },
+        is_default: { type: Boolean, default: false }
     }],
+    // Configuration specifically for DRIVER role
+    driver_config: {
+        vehicle_capacity: { type: Number, default: 5 }, // Pets per trip
+        shift: {
+            type: String,
+            enum: ['MORNING', 'AFTERNOON', 'FULL_DAY'],
+            default: 'FULL_DAY'
+        },
+        max_stops: { type: Number, default: 15 } // Workload limit
+    },
+    push_token: String,
 }, {
     timestamps: true,
 });

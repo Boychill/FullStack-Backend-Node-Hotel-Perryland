@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const path = require('path');
 const connectDB = require('./config/db');
 
 // Initialize App
@@ -12,12 +13,29 @@ const app = express();
 connectDB();
 
 // Middleware
-app.use(helmet());
+app.use(helmet({ crossOriginResourcePolicy: false })); // Allow cross-origin images
 app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-// Routes (Placeholder)
+// Serve static files from uploads folder
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Routes
+const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
+const petRoutes = require('./routes/petRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
+const branchRoutes = require('./routes/branchRoutes');
+const transportRoutes = require('./routes/transportRoutes');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/pets', petRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/branches', branchRoutes);
+app.use('/api/transport', transportRoutes);
+
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to Perryland API 🐶' });
 });
@@ -28,10 +46,8 @@ app.use((req, res) => {
 });
 
 // Error Handler
-app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ message: 'Server Error', error: err.message });
-});
+const errorHandler = require('./middleware/error');
+app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 

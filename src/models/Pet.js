@@ -6,6 +6,10 @@ const petSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
+    co_owners: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }],
     name: {
         type: String,
         required: true,
@@ -27,9 +31,23 @@ const petSchema = new mongoose.Schema({
             enum: ['PENDING', 'APPROVED', 'REJECTED'],
             default: 'PENDING',
         },
-        restrictions: [String],
+        // Detailed evaluation by TRAINER
+        evaluation_notes: String,
+        restrictions: {
+            separate_kennel: { type: Boolean, default: false },
+            only_small_dogs: { type: Boolean, default: false },
+            friendly_with_males: { type: Boolean, default: true },
+            friendly_with_females: { type: Boolean, default: true },
+            not_sociable: { type: Boolean, default: false }, // If true, requires isolation
+        }
     },
     preferences: {
+        food_brand: String,
+        food_amount: Number,
+        food_unit: {
+            type: String,
+            enum: ['GRAMOS', 'VASOS', 'PALAS', 'TAZAS'],
+        },
         donate_leftovers: {
             type: Boolean,
             default: false,
